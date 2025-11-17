@@ -1,0 +1,289 @@
+import { useState } from "react";
+
+export default function HomePage() {
+  const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus(null);
+    setLoading(true);
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await fetch("/api/transfer-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "Something went wrong");
+      }
+
+      setStatus({ type: "success", message: "Form submitted successfully! Check your email." });
+      e.target.reset();
+    } catch (err) {
+      setStatus({ type: "error", message: err.message || "Submission failed" });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div style={{ fontFamily: "Arial, sans-serif", background: "#f7f7f7", minHeight: "100vh", padding: "20px" }}>
+      <h2 style={{ textAlign: "center" }}>Transfer / Change Schedule Request Form</h2>
+
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          background: "white",
+          padding: "20px",
+          borderRadius: "8px",
+          maxWidth: "900px",
+          margin: "20px auto",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+        }}
+      >
+        {/* Basic Info */}
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Employee Name
+        </label>
+        <input name="employeeName" required />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Employee Email (for confirmation)
+        </label>
+        <input name="employeeEmail" type="email" required />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Current Supervisor Email
+        </label>
+        <input name="currentSupervisorEmail" type="email" required />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Program Director Email
+        </label>
+        <input name="programDirectorEmail" type="email" required />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          New Supervisor Email
+        </label>
+        <input name="newSupervisorEmail" type="email" />
+
+        {/* Current Schedule */}
+        <div style={{ background: "#e5e5e5", padding: "8px", fontWeight: "bold", marginTop: "20px" }}>
+          Current Schedule (ALL positions)
+        </div>
+        <ScheduleTable prefix="cur" />
+
+        {/* Requested New Schedule */}
+        <div style={{ background: "#e5e5e5", padding: "8px", fontWeight: "bold", marginTop: "20px" }}>
+          Requested New Schedule (ALL positions)
+        </div>
+        <ScheduleTable prefix="new" />
+
+        {/* Reason */}
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Reason for Transfer
+        </label>
+        <textarea name="reason" rows={3} />
+
+        {/* Eligibility */}
+        <div style={{ background: "#e5e5e5", padding: "8px", fontWeight: "bold", marginTop: "20px" }}>
+          Eligibility
+        </div>
+
+        <FieldSelect
+          name="supSpoken"
+          label="I have spoken with my direct supervisor regarding my transfer request"
+        />
+        <FieldSelect
+          name="months"
+          label="I have completed at least twelve (12) months in my current position"
+        />
+        <FieldSelect
+          name="corrective"
+          label="I have not received any corrective actions in the last twelve (12) months"
+        />
+        <FieldSelect
+          name="discussion"
+          label="If any answer above is NO, I have discussed this with my supervisor"
+        />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Requested Start Date
+        </label>
+        <input type="date" name="reqStartDate" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Employee Signature (type your full name)
+        </label>
+        <input name="empSignature" required />
+
+        {/* Current Supervisor Approval */}
+        <div style={{ background: "#e5e5e5", padding: "8px", fontWeight: "bold", marginTop: "20px" }}>
+          Current Supervisor Approval
+        </div>
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Current Supervisor Signature
+        </label>
+        <input name="curSupSign" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Date
+        </label>
+        <input type="date" name="curSupDate" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Agreed Last Date in Current Schedule
+        </label>
+        <input type="date" name="curSupLastDate" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Program Director Signature
+        </label>
+        <input name="curPDSign" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Staffing Schedule Reviewed
+        </label>
+        <input name="curStaffCheck" />
+
+        <FieldSelect name="curPermitted" label="Request Permitted by Current Supervisor / PD?" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          If NO, please explain
+        </label>
+        <textarea name="curExplain" rows={2} />
+
+        {/* New Supervisor Approval */}
+        <div style={{ background: "#e5e5e5", padding: "8px", fontWeight: "bold", marginTop: "20px" }}>
+          New Supervisor Approval
+        </div>
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          New Supervisor Signature
+        </label>
+        <input name="newSupSign" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Date
+        </label>
+        <input type="date" name="newSupDate" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Agreed Last Date (if different)
+        </label>
+        <input type="date" name="newSupLastDate" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Program Director Signature
+        </label>
+        <input name="newPDSign" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          Staffing Schedule Reviewed
+        </label>
+        <input name="newStaffCheck" />
+
+        <FieldSelect name="newPermitted" label="Request Permitted by New Supervisor / PD?" />
+
+        <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>
+          If NO, please explain
+        </label>
+        <textarea name="newExplain" rows={2} />
+
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            marginTop: "20px",
+            padding: "12px 20px",
+            fontSize: "16px",
+            background: "#005bbb",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: loading ? "not-allowed" : "pointer",
+            width: "100%",
+          }}
+        >
+          {loading ? "Submitting..." : "Submit Form"}
+        </button>
+
+        {status && (
+          <p
+            style={{
+              marginTop: "12px",
+              color: status.type === "success" ? "green" : "red",
+              fontWeight: "bold",
+            }}
+          >
+            {status.message}
+          </p>
+        )}
+      </form>
+    </div>
+  );
+}
+
+function ScheduleTable({ prefix }) {
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  return (
+    <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
+      <thead>
+        <tr>
+          <th style={thStyle}>Day</th>
+          <th style={thStyle}>Location</th>
+          <th style={thStyle}>Hours</th>
+          <th style={thStyle}>Position</th>
+        </tr>
+      </thead>
+      <tbody>
+        {days.map((day) => (
+          <tr key={day}>
+            <td style={tdStyle}>{day}</td>
+            <td style={tdStyle}>
+              <input name={`${prefix}Loc${day.slice(0, 3)}`} />
+            </td>
+            <td style={tdStyle}>
+              <input name={`${prefix}Hours${day.slice(0, 3)}`} />
+            </td>
+            <td style={tdStyle}>
+              <input name={`${prefix}Pos${day.slice(0, 3)}`} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function FieldSelect({ name, label }) {
+  return (
+    <>
+      <label style={{ fontWeight: "bold", marginTop: "12px", display: "block" }}>{label}</label>
+      <select name={name} defaultValue="">
+        <option value="" disabled>
+          Select an option
+        </option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+    </>
+  );
+}
+
+const thStyle = {
+  border: "1px solid #ccc",
+  padding: "8px",
+  textAlign: "center",
+  background: "#f0f0f0",
+};
+const tdStyle = { border: "1px solid #ccc", padding: "8px", textAlign: "center" };

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Transfer / Change Schedule Request</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background:#f7f7f7; }
+  h2 { text-align:center; }
+  form { background:white; padding:20px; border-radius:8px; max-width:900px; margin:auto;
+         box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+  label { font-weight:bold; margin-top:12px; display:block; }
+  input, select, textarea { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:5px; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; }
+  th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+  .checkbox-group { display:flex; gap:25px; margin-top:10px; }
+  .section-title { background:#e5e5e5; padding:8px; font-weight:bold; margin-top:20px; }
+  button { margin-top:20px; padding:12px 20px; font-size:16px; background:#005bbb;
+           color:white; border:none; border-radius:6px; cursor:pointer; width:100%; }
+</style>
+</head>
+
+<body>
+<h2>Transfer / Change Schedule Request Form</h2>
+
+<form>
+  <label>Employee Name</label>
+  <input type="text" name="employeeName" required />
+
+  <div class="section-title">Current Schedule (ALL positions)</div>
+  <table>
+    <tr><th>Day</th><th>Location</th><th>Hours</th><th>Position</th></tr>
+    <tr><td>Monday</td><td><input name="curLocMon"></td><td><input name="curHoursMon"></td><td><input name="curPosMon"></td></tr>
+    <tr><td>Tuesday</td><td><input name="curLocTue"></td><td><input name="curHoursTue"></td><td><input name="curPosTue"></td></tr>
+    <tr><td>Wednesday</td><td><input name="curLocWed"></td><td><input name="curHoursWed"></td><td><input name="curPosWed"></td></tr>
+    <tr><td>Thursday</td><td><input name="curLocThu"></td><td><input name="curHoursThu"></td><td><input name="curPosThu"></td></tr>
+    <tr><td>Friday</td><td><input name="curLocFri"></td><td><input name="curHoursFri"></td><td><input name="curPosFri"></td></tr>
+    <tr><td>Saturday</td><td><input name="curLocSat"></td><td><input name="curHoursSat"></td><td><input name="curPosSat"></td></tr>
+    <tr><td>Sunday</td><td><input name="curLocSun"></td><td><input name="curHoursSun"></td><td><input name="curPosSun"></td></tr>
+  </table>
+
+  <div class="section-title">Requested New Schedule (ALL positions)</div>
+  <table>
+    <tr><th>Day</th><th>Location</th><th>Hours</th><th>Position</th></tr>
+    <tr><td>Monday</td><td><input name="newLocMon"></td><td><input name="newHoursMon"></td><td><input name="newPosMon"></td></tr>
+    <tr><td>Tuesday</td><td><input name="newLocTue"></td><td><input name="newHoursTue"></td><td><input name="newPosTue"></td></tr>
+    <tr><td>Wednesday</td><td><input name="newLocWed"></td><td><input name="newHoursWed"></td><td><input name="newPosWed"></td></tr>
+    <tr><td>Thursday</td><td><input name="newLocThu"></td><td><input name="newHoursThu"></td><td><input name="newPosThu"></td></tr>
+    <tr><td>Friday</td><td><input name="newLocFri"></td><td><input name="newHoursFri"></td><td><input name="newPosFri"></td></tr>
+    <tr><td>Saturday</td><td><input name="newLocSat"></td><td><input name="newHoursSat"></td><td><input name="newPosSat"></td></tr>
+    <tr><td>Sunday</td><td><input name="newLocSun"></td><td><input name="newHoursSun"></td><td><input name="newPosSun"></td></tr>
+  </table>
+
+  <label>Reason for Transfer</label>
+  <textarea name="reason" rows="3"></textarea>
+
+  <div class="section-title">Eligibility</div>
+  <label>I have spoken with my direct supervisor</label>
+  <select name="supSpoken"><option>Yes</option><option>No</option></select>
+
+  <label>I have completed at least 12 months in my current position</label>
+  <select name="months"><option>Yes</option><option>No</option></select>
+
+  <label>I have not received corrective actions in the last 12 months</label>
+  <select name="corrective"><option>Yes</option><option>No</option></select>
+
+  <label>If ANY answer is NO, I have discussed this fully with my supervisor</label>
+  <select name="discussion"><option>Yes</option><option>No</option></select>
+
+  <label>Requested Start Date</label>
+  <input type="date" name="reqStartDate" />
+
+  <label>Employee Signature (typed)</label>
+  <input type="text" name="empSignature" />
+
+  <div class="section-title">Current Supervisor Approval</div>
+  <label>Supervisor Signature</label>
+  <input type="text" name="curSupSign" />
+
+  <label>Date</label>
+  <input type="date" name="curSupDate" />
+
+  <label>Agreed Last Date</label>
+  <input type="date" name="curSupLastDate" />
+
+  <label>Program Director Signature</label>
+  <input type="text" name="curPDSign" />
+
+  <label>Staffing Schedule Reviewed</label>
+  <input type="text" name="curStaffCheck" />
+
+  <label>Request Permitted?</label>
+  <select name="curPermitted"><option>Yes</option><option>No</option></select>
+
+  <label>If No, Explain</label>
+  <textarea name="curExplain" rows="2"></textarea>
+
+  <div class="section-title">New Supervisor Approval</div>
+  <label>Supervisor Signature</label>
+  <input type="text" name="newSupSign" />
+
+  <label>Date</label>
+  <input type="date" name="newSupDate" />
+
+  <label>Agreed Last Date</label>
+  <input type="date" name="newSupLastDate" />
+
+  <label>Program Director Signature</label>
+  <input type="text" name="newPDSign" />
+
+  <label>Staffing Schedule Reviewed</label>
+  <input type="text" name="newStaffCheck" />
+
+  <label>Request Permitted?</label>
+  <select name="newPermitted"><option>Yes</option><option>No</option></select>
+
+  <label>If No, Explain</label>
+  <textarea name="newExplain" rows="2"></textarea>
+
+  <button type="submit">Submit Form</button>
+</form>
+</body>
+</html>
+
